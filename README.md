@@ -1,18 +1,9 @@
 # Discord Level Bot
 
 A production-ready Discord leaderboard and leveling bot built with Python, `discord.py`, PostgreSQL, `asyncpg`, and Pillow. The bot is designed for active Discord communities that need persistent progression, polished rank surfaces, automatic leaderboard posting, and safe database migrations.
-
-## Features
-
-- Level progression capped at level 50
-- XP formula based on `total_xp_required = (5 * level^2) + (50 * level) + 100`
-- Dynamic message XP from 1 to 10 based on current level
-- Message XP cooldown of 60 seconds
-- Daily message XP cap of 200 XP that resets at midnight UTC
-- Daily rewards that do not count against the message XP cap
-- Voice XP that does not count against the message XP cap
 - Hourly automatic leaderboard posting to an optional configured channel
-- Premium-style level-up embeds, profile embeds, and Pillow rank cards
+ Hourly automatic leaderboard posting to an optional configured channel
+ Level-up announcements sent only to a dedicated bot commands channel
 - PostgreSQL persistence with startup-safe schema migration for existing databases
 
 ## Architecture
@@ -32,8 +23,10 @@ A production-ready Discord leaderboard and leveling bot built with Python, `disc
   - Level 2: `2 XP`
   - Level 3: `3 XP`
   - Continue scaling up to level 10
+5. Optionally set `BOT_COMMANDS_CHANNEL_ID` for level-up announcements and `LEADERBOARD_CHANNEL_ID` for hourly leaderboard posts.
   - Level 10 and above: `10 XP`
 - Message XP cooldown: `60 seconds`
+3. Set `DISCORD_TOKEN`, `DATABASE_URL`, and optional config vars like `BOT_COMMANDS_CHANNEL_ID` and `LEADERBOARD_CHANNEL_ID`.
 - Daily message XP cap: `200 XP`
 - Voice XP and daily reward XP bypass the daily message XP cap
 

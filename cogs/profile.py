@@ -87,7 +87,11 @@ class ProfileCog(commands.Cog):
     @app_commands.command(name="rankcard", description="Generate a rank card image.")
     @app_commands.describe(user="Optional member to inspect.")
     async def rankcard(self, interaction: discord.Interaction, user: discord.Member | None = None) -> None:
-        await interaction.response.defer()
+        try:
+            await interaction.response.defer(thinking=True)
+        except discord.NotFound:
+            LOGGER.warning("Rankcard interaction expired before it could be acknowledged for user %s.", interaction.user.id)
+            return
         target = user or interaction.user
         try:
             record = await self.db.get_or_create_user(target.id)

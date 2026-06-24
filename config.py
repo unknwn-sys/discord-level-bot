@@ -33,6 +33,7 @@ class Settings:
     voice_xp_reward: int = 10
     voice_xp_interval_minutes: int = 5
     embed_color: int = 0x5865F2
+    bot_commands_channel_id: int | None = None
     leaderboard_channel_id: int | None = None
     role_rewards: dict[int, str] = field(
         default_factory=lambda: {
@@ -53,6 +54,8 @@ def get_settings() -> Settings:
     if not database_url:
         raise ValueError("DATABASE_URL is required.")
 
+    bot_commands_channel_raw = os.getenv("BOT_COMMANDS_CHANNEL_ID", "").strip()
+    bot_commands_channel_id = int(bot_commands_channel_raw) if bot_commands_channel_raw else None
     leaderboard_channel_raw = os.getenv("LEADERBOARD_CHANNEL_ID", "").strip()
     leaderboard_channel_id = int(leaderboard_channel_raw) if leaderboard_channel_raw else None
 
@@ -67,5 +70,6 @@ def get_settings() -> Settings:
         voice_xp_reward=_parse_int("VOICE_XP_REWARD", 10),
         voice_xp_interval_minutes=_parse_int("VOICE_XP_INTERVAL_MINUTES", 5),
         embed_color=_parse_int("EMBED_COLOR", 0x5865F2),
+        bot_commands_channel_id=bot_commands_channel_id,
         leaderboard_channel_id=leaderboard_channel_id,
     )

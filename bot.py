@@ -48,6 +48,8 @@ class CommunityBot(commands.Bot):
 
     async def on_ready(self) -> None:
         self.logger.info("Bot ready as %s (%s).", self.user, self.user.id if self.user else "unknown")
+        if self.settings.bot_commands_channel_id:
+            self.logger.info("Level-up announcement channel configured: %s.", self.settings.bot_commands_channel_id)
         if self.settings.leaderboard_channel_id:
             self.logger.info("Hourly leaderboard channel configured: %s.", self.settings.leaderboard_channel_id)
 

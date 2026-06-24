@@ -74,7 +74,7 @@ class LevelingCog(commands.Cog):
                 LOGGER.info("Awarded %s XP to %s from message activity.", result.xp_awarded, message.author.id)
 
             if result.level_up:
-                await self._handle_level_up(message.author, message.guild, result, announce_channel=message.channel)
+                await self._handle_level_up(message.author, message.guild, result)
             elif result.reached_daily_cap:
                 LOGGER.info("User %s reached the daily message XP cap.", message.author.id)
                 await message.channel.send(embed=build_daily_cap_embed(self.settings.daily_xp_cap, self.settings.embed_color))
@@ -156,7 +156,6 @@ class LevelingCog(commands.Cog):
         member: discord.abc.User,
         guild: discord.Guild,
         result: MessageXpResult,
-        announce_channel: discord.abc.Messageable | None = None,
     ) -> None:
         LOGGER.info("User %s leveled up to %s.", member.id, result.new_level)
         reward_name = self.settings.role_rewards.get(result.new_level)
@@ -180,9 +179,17 @@ class LevelingCog(commands.Cog):
                 self.settings.max_level,
                 self.settings.embed_color,
             )
-            destination = announce_channel or guild.system_channel
-            if destination is not None:
-                await destination.send(embed=embed)
+            channel_id = self.settings.bot_commands_channel_id
+            destination = guild.get_channel(channel_id) if channel_id is not None else None
+            if destination is None and channel_id is not None:
+                destination = await self.bot.fetch_channel(channel_id)
+
+            if destination is None:
+                LOGGER.warning("No bot commands channel configured for level-up announcements in guild %s.", guild.id)
+                return
+
+            await destination.send(f"🎉 {member.name} upgraded to level {result.new_level}!")
+            await destination.send(embed=embed)
             if at_max or result.reached_max_level:
                 LOGGER.info("User %s reached level 50.", member.id)
         except discord.HTTPException:

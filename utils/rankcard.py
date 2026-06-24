@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from io import BytesIO
 from pathlib import Path
 
@@ -56,8 +57,9 @@ def _draw_stat_box(
     draw.text((x0 + 16, y0 + 48), value, font=value_font, fill=accent)
 
 
-async def generate_rank_card(
-    member: discord.abc.User,
+def _render_rank_card(
+    avatar_bytes: bytes,
+    username: str,
     level: int,
     xp: int,
     rank: int | None,
@@ -72,7 +74,6 @@ async def generate_rank_card(
     draw.rounded_rectangle((20, 20, width - 20, height - 20), radius=34, fill=(23, 30, 43, 255))
     draw.rounded_rectangle((32, 32, width - 32, height - 32), radius=28, outline=(87, 119, 255, 255), width=2)
 
-    avatar_bytes = await member.display_avatar.replace(size=256).read()
     avatar = Image.open(BytesIO(avatar_bytes)).convert("RGBA").resize((220, 220))
     avatar_mask = Image.new("L", (220, 220), 0)
     ImageDraw.Draw(avatar_mask).ellipse((0, 0, 220, 220), fill=255)
@@ -80,7 +81,7 @@ async def generate_rank_card(
     card.paste(avatar, (58, 82), avatar_mask)
     draw.ellipse((50, 74, 286, 310), outline=(94, 128, 255, 255), width=4)
 
-    username = member.display_name[:32]
+    username = username[:32]
     username_font = _fit_text(draw, username, 500, 44, 28)
     title_font = _load_font(20)
     headline_font = _load_font(30)
@@ -152,3 +153,26 @@ async def generate_rank_card(
     card.save(buffer, format="PNG")
     buffer.seek(0)
     return discord.File(fp=buffer, filename="rankcard.png")
+
+
+async def generate_rank_card(
+    member: discord.abc.User,
+    level: int,
+    xp: int,
+    rank: int | None,
+    daily_xp_earned: int,
+    daily_xp_cap: int,
+    max_level: int,
+) -> discord.File:
+    avatar_bytes = await member.display_avatar.replace(size=256).read()
+    return await asyncio.to_thread(
+        _render_rank_card,
+        avatar_bytes,
+        member.display_name,
+        level,
+        xp,
+        rank,
+        daily_xp_earned,
+        daily_xp_cap,
+        max_level,
+    )

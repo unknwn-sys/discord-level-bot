@@ -31,4 +31,4 @@ def calculate_progress(total_xp: int, max_level: int = 50) -> tuple[int, int, fl
 
 
 def get_message_xp(level: int) -> int:
-    return max(1, min(level, 10))
+    return 10
