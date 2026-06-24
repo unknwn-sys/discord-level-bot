@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+import datetime
+
 
 import discord
 from discord import app_commands
@@ -19,7 +21,7 @@ class LeaderboardCog(commands.Cog):
         self.db: Database = bot.db  # type: ignore[attr-defined]
         self.settings: Settings = bot.settings  # type: ignore[attr-defined]
         if self.settings.leaderboard_channel_id:
-            LOGGER.info("Starting hourly leaderboard task.")
+            LOGGER.info("Starting daily leaderboard task.")
             self.hourly_leaderboard.start()
 
     def cog_unload(self) -> None:
@@ -40,7 +42,7 @@ class LeaderboardCog(commands.Cog):
                 ephemeral=True,
             )
 
-    @tasks.loop(hours=1)
+    @tasks.loop(time=datetime.time(hour=0, minute=0, tzinfo=datetime.timezone.utc))
     async def hourly_leaderboard(self) -> None:
         await self.bot.wait_until_ready()
         channel_id = self.settings.leaderboard_channel_id
@@ -59,9 +61,9 @@ class LeaderboardCog(commands.Cog):
 
             new_message = await channel.send(embed=embed)
             await self.db.set_leaderboard_message_id(channel_id, new_message.id)
-            LOGGER.info("Updated hourly leaderboard in channel %s with message %s.", channel_id, new_message.id)
+            LOGGER.info("Updated daily leaderboard in channel %s with message %s.", channel_id, new_message.id)
         except Exception:
-            LOGGER.exception("Failed to post hourly leaderboard.")
+            LOGGER.exception("Failed to post daily leaderboard.")
 
     @hourly_leaderboard.before_loop
     async def before_hourly_leaderboard(self) -> None:

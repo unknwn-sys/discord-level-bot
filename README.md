@@ -101,7 +101,7 @@ The schema lives in [database/schema.sql](/home/ben/Desktop/discord-level-bot/da
 
 ## Automatic Leaderboard Posting
 
-Set `LEADERBOARD_CHANNEL_ID` to a valid text channel ID to enable hourly leaderboard embeds. The task starts automatically when the bot is ready, handles missing channels safely, and logs posting failures.
+Set `LEADERBOARD_CHANNEL_ID` to a valid text channel ID to enable daily leaderboard embeds. The task runs at 00:00 UTC (GMT+00:00). The task starts automatically when the bot is ready, handles missing channels safely, and logs posting failures.
 
 ## Neon PostgreSQL Setup
 
@@ -123,9 +123,11 @@ Set `LEADERBOARD_CHANNEL_ID` to a valid text channel ID to enable hourly leaderb
 
 - If slash commands do not appear, confirm the bot was invited with `applications.commands` and wait for global command sync.
 - If rank cards fail, verify Pillow is installed and the bot can fetch member avatars.
-- If the hourly leaderboard does not post, confirm `LEADERBOARD_CHANNEL_ID` is valid and the bot can send messages in that channel.
+- If the daily leaderboard does not post, confirm `LEADERBOARD_CHANNEL_ID` is valid and the bot can send messages in that channel.
 - If the bot stops awarding message XP, check whether the user has hit the 200 XP daily message cap or the level 50 cap.
 
 ## License
 
-This project is provided as a starter template. Add the license that matches your deployment needs.
+© r2026 Rynex Security
+
+[Visit Rynex Security](https://www.rynexsecurity.com)
