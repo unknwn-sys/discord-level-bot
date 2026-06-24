@@ -130,4 +130,4 @@ Set `LEADERBOARD_CHANNEL_ID` to a valid text channel ID to enable daily leaderbo
 
 © r2026 Rynex Security
 
-[Visit Rynex Security](https://www.rynexsecurity.com)
+[Visit Rynex Security](https://rynexsecurity.com)
